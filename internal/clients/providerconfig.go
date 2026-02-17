@@ -25,6 +25,7 @@ type CfCredentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Passcode string `json:"passcode"`
+	Origin   string `json:"origin,omitempty"`
 }
 
 const (
@@ -55,7 +56,14 @@ func GetCredentialConfig(ctx context.Context, client client.Client, mg resource.
 		return nil, errors.Wrap(err, errExtractEndpoint)
 	}
 
-	return config.New(*url, config.UserPassword(cred.Email, cred.Password), config.SkipTLSValidation())
+	opts := []config.Option{
+		config.UserPassword(cred.Email, cred.Password),
+		config.SkipTLSValidation(),
+	}
+	if cred.Origin != "" {
+		opts = append(opts, config.Origin(cred.Origin))
+	}
+	return config.New(*url, opts...)
 }
 
 func getProviderConfig(ctx context.Context, client client.Client, mg resource.Managed) (*v1beta1.ProviderConfig, error) {
