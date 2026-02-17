@@ -1,0 +1,22 @@
+FROM alpine:3.20.3
+RUN apk --no-cache add ca-certificates bash
+
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+COPY _output/bin/${TARGETOS}_${TARGETARCH}/provider /usr/local/bin/crossplane-provider-cloudfoundry
+
+ENV USER_ID=65532
+USER ${USER_ID}
+EXPOSE 8080
+
+ARG GIT_COMMIT
+ARG BUILD_TIMESTAMP
+
+ENTRYPOINT ["crossplane-provider-cloudfoundry"]
+
+LABEL org.opencontainers.image.title="crossplane-provider-cloudfoundry-controller" \
+      org.opencontainers.image.description="Crossplane controller for CloudFoundry (dxfrontier fork with custom IDP support)" \
+      org.opencontainers.image.url="https://github.com/dxfrontier/crossplane-provider-cloudfoundry" \
+      org.opencontainers.image.source="https://github.com/dxfrontier/crossplane-provider-cloudfoundry.git" \
+      org.opencontainers.image.revision="$GIT_COMMIT" \
+      org.opencontainers.image.created="$BUILD_TIMESTAMP"

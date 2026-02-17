@@ -1,0 +1,13 @@
+FROM scratch
+
+COPY package.yaml .
+
+ARG GIT_COMMIT
+ARG BUILD_TIMESTAMP
+
+LABEL org.opencontainers.image.title="crossplane-provider-cloudfoundry" \
+      org.opencontainers.image.description="Crossplane package for CloudFoundry provider (dxfrontier fork with custom IDP support)" \
+      org.opencontainers.image.url="https://github.com/dxfrontier/crossplane-provider-cloudfoundry" \
+      org.opencontainers.image.source="https://github.com/dxfrontier/crossplane-provider-cloudfoundry.git" \
+      org.opencontainers.image.revision="$GIT_COMMIT" \
+      org.opencontainers.image.created="$BUILD_TIMESTAMP"
