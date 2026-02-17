@@ -360,7 +360,7 @@ help-special: crossplane.help
 
 .PHONY: crossplane.help help-special
 
-PUBLISH_IMAGES ?= crossplane/provider-cloudfoundry crossplane/provider-cloudfoundry-controller
+PUBLISH_IMAGES ?= provider-cloudfoundry provider-cloudfoundry-controller
 
 .PHONY: publish
 publish:
