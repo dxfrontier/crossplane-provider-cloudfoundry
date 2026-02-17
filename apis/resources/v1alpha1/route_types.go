@@ -96,7 +96,7 @@ type RouteDestinationApp struct {
 // RouteSpec defines the desired state of Route
 type RouteSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     RouteParameters `json:"forProvider"`
+	ForProvider            RouteParameters `json:"forProvider"`
 }
 
 // RouteStatus defines the observed state of Route.

@@ -58,7 +58,7 @@ type SpaceRoleParameters struct {
 // SpaceRoleSpec defines the desired state of SpaceRole
 type SpaceRoleSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     SpaceRoleParameters `json:"forProvider"`
+	ForProvider            SpaceRoleParameters `json:"forProvider"`
 }
 
 // SpaceRoleStatus defines the observed state of SpaceRole.

@@ -81,7 +81,7 @@ type SpaceParameters struct {
 // SpaceSpec defines the desired state of Space.
 type SpaceSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     SpaceParameters `json:"forProvider"`
+	ForProvider            SpaceParameters `json:"forProvider"`
 }
 
 // SpaceStatus defines the observed state of Space.

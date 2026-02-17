@@ -165,7 +165,7 @@ type OrgQuotaParameters struct {
 // OrgQuotaSpec defines the desired state of OrgQuota
 type OrgQuotaSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     OrgQuotaParameters `json:"forProvider"`
+	ForProvider            OrgQuotaParameters `json:"forProvider"`
 	// THIS IS A BETA FIELD. It will be honored
 	// unless the Management Policies feature flag is disabled.
 	// InitProvider holds the same fields as ForProvider, with the exception

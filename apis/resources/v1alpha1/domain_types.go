@@ -93,7 +93,7 @@ type DomainParameters struct {
 // DomainSpec defines the desired state of Domain
 type DomainSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     DomainParameters `json:"forProvider"`
+	ForProvider            DomainParameters `json:"forProvider"`
 }
 
 // DomainStatus defines the observed state of Domain.

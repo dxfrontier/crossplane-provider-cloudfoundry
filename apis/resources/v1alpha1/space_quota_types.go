@@ -201,7 +201,7 @@ type SpaceQuotaParameters struct {
 // SpaceQuotaSpec defines the desired state of SpaceQuota
 type SpaceQuotaSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     SpaceQuotaParameters `json:"forProvider"`
+	ForProvider            SpaceQuotaParameters `json:"forProvider"`
 	// THIS IS A BETA FIELD. It will be honored
 	// unless the Management Policies feature flag is disabled.
 	// InitProvider holds the same fields as ForProvider, with the exception

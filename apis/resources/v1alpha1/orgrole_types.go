@@ -57,7 +57,7 @@ type OrgRoleParameters struct {
 // OrgRoleSpec defines the desired state of OrgRole
 type OrgRoleSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     OrgRoleParameters `json:"forProvider"`
+	ForProvider            OrgRoleParameters `json:"forProvider"`
 }
 
 // OrgRoleStatus defines the observed state of OrgRole.

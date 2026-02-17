@@ -21,7 +21,7 @@ type OrgMembersParameters struct {
 
 type OrgMembersSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     OrgMembersParameters `json:"forProvider"`
+	ForProvider            OrgMembersParameters `json:"forProvider"`
 }
 
 type OrgMembersStatus struct {

@@ -222,7 +222,7 @@ type TimeoutsParameters struct {
 // ServiceInstanceSpec defines the desired state of ServiceInstance
 type ServiceInstanceSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     ServiceInstanceParameters `json:"forProvider"`
+	ForProvider            ServiceInstanceParameters `json:"forProvider"`
 
 	// (Boolean) Enable drift detection for configuration parameters of managed service instance. Default is false.
 	// +kubebuilder:validation:Optional

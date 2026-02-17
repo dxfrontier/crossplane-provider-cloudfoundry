@@ -57,7 +57,6 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		}),
 	}
 
-
 	r := managed.NewReconciler(mgr,
 		resource.ManagedKind(v1alpha1.SpaceQuota_GroupVersionKind),
 		options...)

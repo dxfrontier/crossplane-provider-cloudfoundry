@@ -58,7 +58,6 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		managed.WithPollInterval(o.PollInterval),
 	}
 
-
 	r := managed.NewReconciler(mgr,
 		resource.ManagedKind(v1alpha1.ServiceCredentialBindingGroupVersionKind),
 		options...)

@@ -78,7 +78,6 @@ func Setup(mgr ctrl.Manager, controllerOptions controller.Options) error {
 		managed.WithPollInterval(controllerOptions.PollInterval),
 	}
 
-
 	r := managed.NewReconciler(mgr,
 		resource.ManagedKind(v1alpha1.OrgQuota_GroupVersionKind),
 		options...)

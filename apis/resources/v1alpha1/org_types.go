@@ -65,7 +65,7 @@ type OrgParameters struct {
 // OrgSpec defines the desired state of Org
 type OrgSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     OrgParameters `json:"forProvider"`
+	ForProvider            OrgParameters `json:"forProvider"`
 }
 
 // OrgStatus defines the observed state of Org.

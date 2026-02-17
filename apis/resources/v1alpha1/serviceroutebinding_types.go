@@ -111,7 +111,7 @@ type Links map[string]Link
 // ServiceRouteBindingSpec defines the desired state of ServiceRouteBinding
 type ServiceRouteBindingSpec struct {
 	xpv2.ManagedResourceSpec `json:",inline"`
-	ForProvider       ServiceRouteBindingParameters `json:"forProvider"`
+	ForProvider              ServiceRouteBindingParameters `json:"forProvider"`
 }
 
 // ServiceRouteBindingStatus defines the observed state of ServiceRouteBinding

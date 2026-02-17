@@ -25,7 +25,7 @@ type SpaceMembersParameters struct {
 // SpaceMembersSpec defines the desired state of SpaceMembers.
 type SpaceMembersSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     SpaceMembersParameters `json:"forProvider"`
+	ForProvider            SpaceMembersParameters `json:"forProvider"`
 }
 
 // SpaceMembersStatus defines the observed state of SpaceMembers.

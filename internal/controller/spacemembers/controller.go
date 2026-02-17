@@ -51,7 +51,6 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		managed.WithPollInterval(o.PollInterval),
 	}
 
-
 	r := managed.NewReconciler(mgr,
 		resource.ManagedKind(v1alpha1.SpaceMembersGroupVersionKind),
 		options...)
@@ -67,7 +66,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 // is called.
 type connector struct {
 	kube        k8s.Client
-	usage *resource.ProviderConfigUsageTracker
+	usage       *resource.ProviderConfigUsageTracker
 	newClientFn func(*config.Config) (*members.Client, error)
 }
 

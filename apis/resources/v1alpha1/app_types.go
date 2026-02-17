@@ -246,7 +246,7 @@ type SidecarConfiguration struct {
 // AppSpec defines the desired state of App
 type AppSpec struct {
 	v2.ManagedResourceSpec `json:",inline"`
-	ForProvider     AppParameters `json:"forProvider"`
+	ForProvider            AppParameters `json:"forProvider"`
 }
 
 // AppStatus defines the observed state of App.
