@@ -67,10 +67,11 @@ jobs:
             GIT_COMMIT=${{ github.sha }}
             BUILD_TIMESTAMP=${{ github.event.head_commit.timestamp }}
 
-      - name: Prepare package.yaml
+      - name: Prepare package contents
         run: |
           sed "s|DOCKER_REGISTRY/crossplane/provider-cloudfoundry-controller:VERSION|${{ env.CONTROLLER_IMAGE }}:${{ steps.version.outputs.VERSION }}|" \
             package/crossplane.yaml > _output/package.yaml
+          cp -r package/crds _output/crds
 
       - name: Build and push package image
         uses: docker/build-push-action@v6

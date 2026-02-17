@@ -1,6 +1,7 @@
 FROM scratch
 
 COPY package.yaml .
+COPY crds/ crds/
 
 ARG GIT_COMMIT
 ARG BUILD_TIMESTAMP
