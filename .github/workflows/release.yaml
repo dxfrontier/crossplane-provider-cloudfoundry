@@ -40,6 +40,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Crossplane CLI
+        run: |
+          curl -sL "https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh" | sh
+          sudo mv crossplane /usr/local/bin/
+
       - name: Build linux/amd64
         env:
           CGO_ENABLED: "0"
@@ -67,21 +72,13 @@ jobs:
             GIT_COMMIT=${{ github.sha }}
             BUILD_TIMESTAMP=${{ github.event.head_commit.timestamp }}
 
-      - name: Prepare package contents
+      - name: Prepare crossplane.yaml with controller image
         run: |
           sed "s|DOCKER_REGISTRY/crossplane/provider-cloudfoundry-controller:VERSION|${{ env.CONTROLLER_IMAGE }}:${{ steps.version.outputs.VERSION }}|" \
-            package/crossplane.yaml > _output/package.yaml
-          cp -r package/crds _output/crds
+            package/crossplane.yaml > package/crossplane.yaml.tmp
+          mv package/crossplane.yaml.tmp package/crossplane.yaml
 
-      - name: Build and push package image
-        uses: docker/build-push-action@v6
-        with:
-          context: _output
-          file: .github/Dockerfile.package
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ env.PACKAGE_IMAGE }}:${{ steps.version.outputs.VERSION }}
-          build-args: |
-            GIT_COMMIT=${{ github.sha }}
-            BUILD_TIMESTAMP=${{ github.event.head_commit.timestamp }}
+      - name: Build and push Crossplane package
+        run: |
+          crossplane xpkg build --package-root=./package -o provider-cloudfoundry.xpkg
+          crossplane xpkg push "${{ env.PACKAGE_IMAGE }}:${{ steps.version.outputs.VERSION }}" -f provider-cloudfoundry.xpkg
