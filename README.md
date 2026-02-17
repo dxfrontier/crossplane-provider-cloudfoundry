@@ -15,9 +15,12 @@
 We have a lot of exciting new features and improvements in our backlogs for you to expect and even contribute yourself! We will publish a detailed roadmap soon.
 
 ## 📊 Installation
-> Crossplane v2 is NOT yet supported, please use Crossplane v1 for now.
 
-To install this provider in a kubernetes cluster running crossplane, you can use the provider custom resource, replacing the `<version>`placeholder with the current version of this provider (e.g. v0.3.0):
+> **This fork uses crossplane-runtime v2 with namespace-scoped CRDs.**
+> All managed resources, ProviderConfigs, and ProviderConfigUsages are namespace-scoped.
+> This is a **breaking change** — existing cluster-scoped CRs must be recreated as namespaced resources.
+
+To install this provider in a kubernetes cluster running crossplane, you can use the provider custom resource, replacing the `<VERSION>` placeholder with the current version of this provider (e.g. v0.3.0):
 
 ```yaml
 apiVersion: pkg.crossplane.io/v1
@@ -29,6 +32,42 @@ spec:
 ```
 
 Crossplane will take care to create a deployment for this provider. Once it becomes healthy, you can configure your provider using proper credentials and start orchestrating :rocket:.
+
+### Namespace-scoped Resources
+
+All CRDs in this provider are **namespace-scoped**. This means:
+
+- Every managed resource (Organization, Space, ServiceInstance, etc.) must include a `metadata.namespace`
+- The `ProviderConfig` must be in the **same namespace** as the managed resources referencing it
+- Cross-references between resources (e.g. Space → Organization) must be within the **same namespace**
+
+Example:
+```yaml
+apiVersion: cloudfoundry.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+  namespace: my-team
+spec:
+  apiEndpoint: https://api.cf.example.com
+  credentials:
+    source: Secret
+    secretRef:
+      name: cf-credentials
+      namespace: my-team
+      key: credentials
+---
+apiVersion: cloudfoundry.crossplane.io/v1alpha1
+kind: Space
+metadata:
+  name: my-space
+  namespace: my-team
+spec:
+  forProvider:
+    name: my-space
+    orgRef:
+      name: my-org
+```
 
 ## 🔬 Developing
 ### Initial Setup
