@@ -365,8 +365,8 @@ PUBLISH_IMAGES ?= provider-cloudfoundry provider-cloudfoundry-controller
 .PHONY: publish
 publish:
 	@$(INFO) "Publishing images $(PUBLISH_IMAGES) to $(DOCKER_REGISTRY)"
-	@docker tag $(BUILD_REGISTRY)/$(BASE_NAME)-$(SAFEHOSTARCH) $(DOCKER_REGISTRY)/provider-cloudfoundry:$(VERSION)
-	@docker tag $(BUILD_REGISTRY)/$(BASE_NAME)-controller-$(SAFEHOSTARCH) $(DOCKER_REGISTRY)/provider-cloudfoundry-controller:$(VERSION)
+	@docker tag $(BUILD_REGISTRY)/crossplane/provider-cloudfoundry $(DOCKER_REGISTRY)/provider-cloudfoundry:$(VERSION)
+	@docker tag $(BUILD_REGISTRY)/crossplane/provider-cloudfoundry-controller $(DOCKER_REGISTRY)/provider-cloudfoundry-controller:$(VERSION)
 	@for image in $(PUBLISH_IMAGES); do \
 		echo "Publishing image $(DOCKER_REGISTRY)/$${image}:$(VERSION)"; \
 		docker push $(DOCKER_REGISTRY)/$${image}:$(VERSION); \
