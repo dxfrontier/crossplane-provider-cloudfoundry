@@ -2,6 +2,7 @@ package members
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	cfv3 "github.com/cloudfoundry/go-cfclient/v3/client"
@@ -63,29 +64,91 @@ func newOrgRoleListOptions(cr *v1alpha1.OrgMembers) *cfv3.RoleListOptions {
 	return opts
 }
 
-// CreateOrganizationRoleByUsername assigns a user to a role by role type
+// CreateOrganizationRoleByUsername assigns a user to a role by role type.
+// If the role already exists (CF API 422), the existing role is fetched and returned for idempotency.
 func (c *Client) CreateOrganizationRoleByUsername(ctx context.Context, org string, roleType string, username string, origin string) (*resource.Role, error) {
-	return c.Roles.CreateOrganizationRoleWithUsername(ctx, org, username, orgRoleType(roleType), origin)
+	r, err := c.Roles.CreateOrganizationRoleWithUsername(ctx, org, username, orgRoleType(roleType), origin)
+	if err != nil {
+		if clients.ErrorIsRoleAlreadyExists(err) {
+			return c.findExistingOrgRole(ctx, org, roleType, username, origin)
+		}
+		return nil, err
+	}
+	return r, nil
 }
 
-// CreateSpaceRoleByUsername assigns a user to a space role by role type
+// findExistingOrgRole looks up an existing org role for the given user.
+func (c *Client) findExistingOrgRole(ctx context.Context, org string, roleType string, username string, origin string) (*resource.Role, error) {
+	opts := cfv3.NewRoleListOptions()
+	opts.OrganizationGUIDs.EqualTo(org)
+	opts.WithOrganizationRoleType(orgRoleType(roleType))
+	roles, users, err := c.Roles.ListIncludeUsersAll(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	key := (&v1alpha1.Member{Username: username, Origin: origin}).Key()
+	userGUIDs := make(map[string]string)
+	for _, u := range users {
+		userGUIDs[toMemberKey(u)] = u.GUID
+	}
+	if guid, ok := userGUIDs[key]; ok {
+		for _, r := range roles {
+			if r.Relationships.User.Data.GUID == guid {
+				return r, nil
+			}
+		}
+	}
+	return nil, fmt.Errorf("role exists but could not be found for user %s in org %s", username, org)
+}
+
+// CreateSpaceRoleByUsername assigns a user to a space role by role type.
+// If the role already exists (CF API 422), the existing role is fetched and returned for idempotency.
 func (c *Client) CreateSpaceRoleByUsername(ctx context.Context, space string, roleType string, username string, origin string) (*resource.Role, error) {
 	s, err := c.Spaces.Get(ctx, space)
 	if err != nil {
 		return nil, err
 	}
 
-	// blind create to ensure user has a role in the org
+	// ensure user has org_user role (idempotent — handles "already has role")
 	if _, err := c.CreateOrganizationRoleByUsername(ctx, s.Relationships.Organization.Data.GUID, v1alpha1.OrgUser, username, origin); err != nil {
-
 		if strings.Contains(err.Error(), "No user exists") {
-			// TODO: create user once API is available. For now, return error
 			return nil, err
 		}
-		// else do nothing if the user already has a role in the org
+		// other errors from org role are non-fatal
 	}
 
-	return c.Roles.CreateSpaceRoleWithUsername(ctx, space, username, spaceRoleType(roleType), origin)
+	r, err := c.Roles.CreateSpaceRoleWithUsername(ctx, space, username, spaceRoleType(roleType), origin)
+	if err != nil {
+		if clients.ErrorIsRoleAlreadyExists(err) {
+			return c.findExistingSpaceRole(ctx, space, roleType, username, origin)
+		}
+		return nil, err
+	}
+	return r, nil
+}
+
+// findExistingSpaceRole looks up an existing space role for the given user.
+func (c *Client) findExistingSpaceRole(ctx context.Context, space string, roleType string, username string, origin string) (*resource.Role, error) {
+	opts := cfv3.NewRoleListOptions()
+	opts.SpaceGUIDs.EqualTo(space)
+	opts.WithSpaceRoleType(spaceRoleType(roleType))
+	roles, users, err := c.Roles.ListIncludeUsersAll(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	key := (&v1alpha1.Member{Username: username, Origin: origin}).Key()
+	userGUIDs := make(map[string]string)
+	for _, u := range users {
+		userGUIDs[toMemberKey(u)] = u.GUID
+	}
+	if guid, ok := userGUIDs[key]; ok {
+		for _, r := range roles {
+			if r.Relationships.User.Data.GUID == guid {
+				return r, nil
+			}
+		}
+	}
+	return nil, fmt.Errorf("role exists but could not be found for user %s in space %s", username, space)
 }
 
 // ListUsersWithRole returns a list of users with a specific role

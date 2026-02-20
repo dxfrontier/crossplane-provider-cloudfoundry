@@ -20,6 +20,14 @@ func ErrorIsNotFound(err error) bool {
 	return strings.Contains(err.Error(), "NotFound")
 }
 
+// ErrorIsRoleAlreadyExists returns true if the CF API reports a role already exists.
+func ErrorIsRoleAlreadyExists(err error) bool {
+	if err == nil {
+		return false
+	}
+	return strings.Contains(err.Error(), "already has") && strings.Contains(err.Error(), "role")
+}
+
 // IgnoreNotFoundErr returns nil if the error a not found issue.
 func IgnoreNotFoundErr(err error) error {
 	if err == nil {
